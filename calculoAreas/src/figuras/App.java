@@ -7,7 +7,7 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         int option;
         do {
-            System.out.println("Calculadora de Área by Javier");
+            System.out.println("Calculadora de Área de Javier");
 
             System.out.println("Selecciona una opción:");
             System.out.println("1. Círculo");
