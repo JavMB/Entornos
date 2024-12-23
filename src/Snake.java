@@ -30,7 +30,7 @@ public class Snake {
         if (direction == 3) snakeY[0]--;
 
         for (int d = length - 1; d > 0; d--) {
-            if ((snakeX[0] == snakeX[d]) & (snakeX[0] == snakeY[d])) length = d - 2;
+            if ((snakeX[0] == snakeX[d]) && (snakeY[0] == snakeY[d])) length = d - 2;
         }
 
         if (snakeX[0] > main.WIDTH) snakeX[0] = 0;
