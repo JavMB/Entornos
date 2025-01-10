@@ -1,0 +1,49 @@
+name: Build macOS App with jpackage
+
+on:
+  push:
+    branches: [ "main" ]  # o tu rama principal
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-macos:
+    runs-on: macos-latest  # usa una máquina virtual con macOS
+
+    steps:
+      # 1. Descarga tu repo
+      - name: Check out
+        uses: actions/checkout@v3
+
+      # 2. Compila manualmente con javac
+      - name: Compile Java
+        run: |
+          mkdir -p out
+          # Busca todos los .java en 'src' y compila a la carpeta 'out'
+          javac -d out $(find practica6_simplificada/src -name "*.java")
+
+      # 3. Crear el .jar con tu clase principal
+      - name: Create JAR
+        run: |
+          # MyApp.jar es un nombre de ejemplo
+          # Cambia 'com.tuempresa.Main' si tu paquete o clase difieren
+          jar cfe MyApp.jar com.tuempresa.Main -C out .
+
+      # 4. Usar jpackage para generar el .dmg
+      - name: Package with jpackage
+        run: |
+          mkdir -p dist
+          jpackage \
+            --type dmg \
+            --name MyApp \
+            --input . \
+            --main-jar MyApp.jar \
+            --main-class com.tuempresa.Main \
+            --dest dist
+
+      # 5. Subir el .dmg como "artefacto" descargable
+      - name: Upload dmg artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: MyApp-dmg
+          path: dist/*.dmg
