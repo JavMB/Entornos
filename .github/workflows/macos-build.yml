@@ -2,34 +2,32 @@ name: Build macOS App with jpackage
 
 on:
   push:
-    branches: [ "main" ]  # o tu rama principal
+    branches: [ "main" ]  # Cambia si tu rama principal se llama distinto
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build-macos:
-    runs-on: macos-latest  # usa una máquina virtual con macOS
+    runs-on: macos-latest  # usa una VM con macOS
 
     steps:
-      # 1. Descarga tu repo
+      # 1. Clona tu repo
       - name: Check out
         uses: actions/checkout@v3
 
-      # 2. Compila manualmente con javac
+      # 2. Compila todo el .java en 'src' y pon los .class en 'out'
       - name: Compile Java
         run: |
           mkdir -p out
-          # Busca todos los .java en 'src' y compila a la carpeta 'out'
-          javac -d out $(find practica6_simplificada/src -name "*.java")
+          javac -d out $(find src -name "*.java")
 
-      # 3. Crear el .jar con tu clase principal
+      # 3. Crea el .jar nombrándolo "MyApp.jar"
+      #    Ajusta "com.tuempresa.Main" a la clase con el main que quieras usar
       - name: Create JAR
         run: |
-          # MyApp.jar es un nombre de ejemplo
-          # Cambia 'com.tuempresa.Main' si tu paquete o clase difieren
-          jar cfe MyApp.jar com.tuempresa.Main -C out .
+          jar cfe Snake.jar com.Javier.SnakeGame -C out .
 
-      # 4. Usar jpackage para generar el .dmg
+      # 4. Genera el instalador DMG con jpackage
       - name: Package with jpackage
         run: |
           mkdir -p dist
@@ -37,13 +35,13 @@ jobs:
             --type dmg \
             --name MyApp \
             --input . \
-            --main-jar MyApp.jar \
-            --main-class com.tuempresa.Main \
+            --main-jar Snake.jar \
+            --main-class com.Javier.SnakeGame \
             --dest dist
 
-      # 5. Subir el .dmg como "artefacto" descargable
+      # 5. Sube el .dmg como un artefacto descargable
       - name: Upload dmg artifact
         uses: actions/upload-artifact@v3
         with:
-          name: MyApp-dmg
+          name: Snake-dmg
           path: dist/*.dmg
